@@ -1,0 +1,48 @@
+#!/bin/bash
+mount -o remount,rw /
+date -s '2025-04-07 00:00:00'
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+/debootstrap/debootstrap --second-stage
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+export PATH
+rm -rf /debootstrap
+echo -n "root:cartesi" | chpasswd
+cat > /etc/fstab << EOF
+proc /proc proc defaults 0 0
+/dev/root / ext4 defaults,noatime 1 1
+EOF
+
+sed -i "s/main/main universe multiverse/g" /etc/apt/sources.list
+cat > /etc/systemd/network/20-eth0.network << EOF
+[Match]
+Name=eth0
+
+[Network]
+DHCP=yes
+
+[Link]
+RequiredForOnline=no
+ActivationPolicy=always-up
+EOF
+systemctl enable systemd-networkd.service
+
+mkdir /mnt/new_root
+mount -t tmpfs tmpfs /mnt/new_root
+mkdir /mnt/new_root/bin
+cp /bin/busybox /mnt/new_root/bin/
+mkdir /mnt/new_root/dev
+mkdir /mnt/new_root/proc
+mkdir /mnt/new_root/sys
+mount --bind /dev /mnt/new_root/dev
+mount -t proc proc /mnt/new_root/proc
+mount -t sysfs sys /mnt/new_root/sys
+busybox chroot /mnt/new_root /bin/busybox --install -s /bin
+mkdir /mnt/new_root/old_root
+cd /mnt/new_root
+pivot_root . old_root
+exec busybox chroot . /bin/sh << 'EOF'
+umount -l /old_root 
+sync
+halt -f
+EOF

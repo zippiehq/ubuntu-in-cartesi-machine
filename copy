@@ -1,0 +1,15 @@
+#!/bin/bash
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+export PATH
+ls -lR /dev
+mount -t proc proc /proc
+date -s "2025-04-07 00:00:00"
+mkfs.ext4 -O ^has_journal /dev/pmem1
+mount -t tmpfs tmpfs /tmp
+mkdir -p /tmp/mnt
+mount /dev/pmem1 /tmp/mnt
+cat /proc/mounts
+tar --one-file-system -pcf - / | tar -C /tmp/mnt/ -xf -
+umount /tmp/mnt
+sync
+echo "NOTE: ignore kernel failure, it doesn't matter, we unmounted and synced already"
