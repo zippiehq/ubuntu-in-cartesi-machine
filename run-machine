@@ -1,2 +1,2 @@
 #!/bin/bash
-cartesi-machine -it --skip-root-hash-check --virtio-net=user --append-bootargs="loglevel=8 no4lvl init=/sbin/init rootfstype=ext4 ro" --flash-drive=label:root,filename:/image.ext2 --ram-length=2Gi
+cartesi-machine -i --skip-root-hash-check --virtio-net=user --append-bootargs="loglevel=8 no4lvl init=/sbin/init rootfstype=ext4 ro systemd.unified_cgroup_hierarchy=0" --flash-drive=label:root,filename:/image.ext2 --ram-length=2Gi
