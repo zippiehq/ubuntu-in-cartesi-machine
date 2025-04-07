@@ -40,7 +40,7 @@ RUN HOSTNAME=linux SOURCE_DATE_EPOCH=$SOURCE_DATA_EPOCH genext2fs -z -v -v -f -a
 RUN sha256sum /replicate/source.ext2
 COPY linux-6.5.13-ctsi-1-v0.20.0.bin /usr/share/cartesi-machine/images/linux.bin
 #RUN curl -OL https://github.com/cartesi/machine-linux-image/releases/download/v0.20.0/linux-6.5.13-ctsi-1-v0.20.0.bin && mkdir -p /usr/share/cartesi-machine/images && mv linux-6.5.13-ctsi-1-v0.20.0.bin /usr/share/cartesi-machine/images/linux.bin
-RUN curl -OL https://github.com/cartesi/machine-emulator/releases/download/v0.19.0-alpha3/cartesi-machine-v0.19.0_$(dpkg --print-architecture).deb && apt-get install --snapshot=${APT_UPDATE_SNAPSHOT} -y --no-install-recommends ./cartesi-machine-v0.19.0_arm64.deb && rm -f cartesi-machine-v0.19.0_$(dpkg --print-architecture).deb
+RUN curl -OL https://github.com/cartesi/machine-emulator/releases/download/v0.19.0-alpha3/cartesi-machine-v0.19.0_$(dpkg --print-architecture).deb && apt-get install --snapshot=${APT_UPDATE_SNAPSHOT} -y --no-install-recommends ./cartesi-machine-v0.19.0_$(dpkg --print-architecture).deb && rm -f cartesi-machine-v0.19.0_$(dpkg --print-architecture).deb
 
 RUN truncate -s 2G /image.ext2
 # first we make a new file system within the machine and copy all the debootstrap content to it
